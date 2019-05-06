@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -21,6 +22,7 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.stage.Stage;
 import model.SpaceRunnerButton;
+import model.SpaceRunnerSubScene;
 
 /**
  *
@@ -45,8 +47,11 @@ public class ViewController {
         mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene); 
+        
         createButtons();
         createBackground();
+        createLogo();
+        createSubScene();
     }
     
     public Stage getMainStage(){
@@ -95,9 +100,39 @@ public class ViewController {
     
     private void createBackground(){
         Image backgroundImage = new Image("view/ressources/purple.png", 256, 256,false, true);
-        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
+        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+                BackgroundPosition.DEFAULT, null);
         
         mainPane.setBackground(new Background(background));
+    }
+   
+    private void createLogo(){
+        ImageView logo = new ImageView("view/ressources/logo.png");
+        logo.setLayoutX(700);
+        logo.setLayoutY(50);
+        
+        logo.setOnMouseEntered(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+                logo.setEffect(new DropShadow());
+            }  
+        });
+        
+        logo.setOnMouseExited(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+                logo.setEffect(null);
+            }  
+        });
+        
+        mainPane.getChildren().add(logo);
+    }
+    
+    private void createSubScene(){
+        SpaceRunnerSubScene subScene = new SpaceRunnerSubScene();
+        subScene.setLayoutX(350);
+        subScene.setLayoutY(180);
+        mainPane.getChildren().add(subScene);
     }
     
 }
