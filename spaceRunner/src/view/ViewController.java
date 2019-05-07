@@ -47,6 +47,8 @@ public class ViewController {
     
     List<SpaceRunnerButton> menuButtons;
     
+    private SpaceRunnerSubScene sceneToHide;
+    
     public ViewController() {
         menuButtons = new ArrayList<>();
         mainPane = new AnchorPane();
@@ -58,6 +60,15 @@ public class ViewController {
         createBackground();
         createLogo();
         createSubScenes();
+    }
+    
+    private void showSubScene(SpaceRunnerSubScene subScene){
+        if(sceneToHide != null){
+            sceneToHide.moveSubScene();
+        }
+        
+        subScene.moveSubScene();
+        sceneToHide = subScene;
     }
     
     public Stage getMainStage(){
@@ -86,7 +97,7 @@ public class ViewController {
         startButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                shipChooserScene.moveSubScene();
+                showSubScene(shipChooserScene);
             }
             
         });
@@ -99,7 +110,7 @@ public class ViewController {
         scoresButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                scoresSubScene.moveSubScene();
+                showSubScene(scoresSubScene);
             }
             
         });
@@ -112,7 +123,7 @@ public class ViewController {
         helpButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                helpSubScene.moveSubScene();
+                showSubScene(helpSubScene);
             }
             
         });
@@ -125,7 +136,7 @@ public class ViewController {
         creditsButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                creditsSubScene.moveSubScene();
+                showSubScene(creditsSubScene);
             }
             
         });
@@ -134,6 +145,14 @@ public class ViewController {
     private void createExitButton(){
         SpaceRunnerButton exitButton = new SpaceRunnerButton("EXIT");
         addMenuButton(exitButton);
+        
+        exitButton.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                mainStage.close();
+            }
+            
+        });
     }
     
     private void createBackground(){
