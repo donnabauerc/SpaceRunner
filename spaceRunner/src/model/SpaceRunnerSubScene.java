@@ -44,7 +44,7 @@ public class SpaceRunnerSubScene extends SubScene{
         setLayoutY(180);
     }
     
-    public void moveSubscene(){
+    public void moveSubScene(){
         TranslateTransition transition = new TranslateTransition();
         transition.setDuration(Duration.seconds(0.3));
         transition.setNode(this);

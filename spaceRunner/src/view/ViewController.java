@@ -30,7 +30,7 @@ import model.SpaceRunnerSubScene;
  * @author Chris
  */
 public class ViewController {
-    
+    //4.03 tutorial nr 6
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 708;
     private AnchorPane mainPane;
@@ -40,6 +40,9 @@ public class ViewController {
     private final static int MENU_BUTTONS_START_X = 100;
     private final static int MENU_BUTTONS_START_Y = 150;
     
+    private SpaceRunnerSubScene shipChooserScene;
+    private SpaceRunnerSubScene scoresSubScene;
+    private SpaceRunnerSubScene helpSubScene;
     private SpaceRunnerSubScene creditsSubScene;
     
     List<SpaceRunnerButton> menuButtons;
@@ -79,16 +82,40 @@ public class ViewController {
     private void createStartButton(){
         SpaceRunnerButton startButton = new SpaceRunnerButton("PLAY");
         addMenuButton(startButton);
+        
+        startButton.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                shipChooserScene.moveSubScene();
+            }
+            
+        });
     }
     
     private void createScoresButton(){
         SpaceRunnerButton scoresButton = new SpaceRunnerButton("SCORES");
         addMenuButton(scoresButton);
+        
+        scoresButton.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                scoresSubScene.moveSubScene();
+            }
+            
+        });
     }
     
     private void createHelpButton(){
         SpaceRunnerButton helpButton = new SpaceRunnerButton("HELP");
         addMenuButton(helpButton);
+        
+        helpButton.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                helpSubScene.moveSubScene();
+            }
+            
+        });
     }
     
     private void createCreditsButton(){
@@ -98,7 +125,7 @@ public class ViewController {
         creditsButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                creditsSubScene.moveSubscene();
+                creditsSubScene.moveSubScene();
             }
             
         });
@@ -140,8 +167,18 @@ public class ViewController {
     }
     
     private void createSubScenes(){
+        shipChooserScene = new SpaceRunnerSubScene();
+        mainPane.getChildren().add(shipChooserScene);
+        
+        scoresSubScene = new SpaceRunnerSubScene();
+        mainPane.getChildren().add(scoresSubScene);
+        
+        helpSubScene = new SpaceRunnerSubScene();
+        mainPane.getChildren().add(helpSubScene);
+        
         creditsSubScene = new SpaceRunnerSubScene();
         mainPane.getChildren().add(creditsSubScene);
+        
     }
     
 }
