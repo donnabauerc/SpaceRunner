@@ -21,7 +21,11 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import model.InfoLabel;
+import model.Ship;
+import model.ShipPicker;
 import model.SpaceRunnerButton;
 import model.SpaceRunnerSubScene;
 
@@ -48,6 +52,9 @@ public class ViewController {
     List<SpaceRunnerButton> menuButtons;
     
     private SpaceRunnerSubScene sceneToHide;
+    
+    List<ShipPicker> shipsList;
+    private Ship choosenShip;
     
     public ViewController() {
         menuButtons = new ArrayList<>();
@@ -186,9 +193,6 @@ public class ViewController {
     }
     
     private void createSubScenes(){
-        shipChooserScene = new SpaceRunnerSubScene();
-        mainPane.getChildren().add(shipChooserScene);
-        
         scoresSubScene = new SpaceRunnerSubScene();
         mainPane.getChildren().add(scoresSubScene);
         
@@ -198,6 +202,48 @@ public class ViewController {
         creditsSubScene = new SpaceRunnerSubScene();
         mainPane.getChildren().add(creditsSubScene);
         
+        createShipChooserSubScene();
+    }
+
+    private void createShipChooserSubScene() {
+        shipChooserScene = new SpaceRunnerSubScene();
+        mainPane.getChildren().add(shipChooserScene);
+        
+        InfoLabel chooseShipLabel = new InfoLabel("Choose Your Ship");
+        chooseShipLabel.setLayoutX(110);
+        chooseShipLabel.setLayoutY(25);
+        shipChooserScene.getPane().getChildren().add(chooseShipLabel);
+        shipChooserScene.getPane().getChildren().add(createShipsToChoose());
+        
+        
+    }
+    
+    private HBox createShipsToChoose(){
+        HBox box = new HBox();
+        box.setSpacing(20);
+        shipsList = new ArrayList<>();
+        
+        for(Ship ship : Ship.values()){
+            ShipPicker shipToPick = new ShipPicker(ship);
+            shipsList.add(shipToPick);
+            box.getChildren().add(shipToPick);
+            
+            shipToPick.setOnMouseClicked(new EventHandler<MouseEvent>(){
+                @Override
+                public void handle(MouseEvent event) {
+                    for(ShipPicker ship : shipsList){
+                        ship.setIsCircleChoosen(false);
+                    }
+                    shipToPick.setIsCircleChoosen(true);
+                    choosenShip = shipToPick.getShip();
+                } 
+            });
+        }
+        
+        box.setLayoutX(300-(118*2));
+        box.setLayoutY(100);
+        
+        return box;
     }
     
 }
