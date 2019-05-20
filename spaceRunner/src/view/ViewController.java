@@ -211,11 +211,11 @@ public class ViewController {
         
         InfoLabel chooseShipLabel = new InfoLabel("Choose Your Ship");
         chooseShipLabel.setLayoutX(110);
-        chooseShipLabel.setLayoutY(25);
+        chooseShipLabel.setLayoutY(35);
         shipChooserScene.getPane().getChildren().add(chooseShipLabel);
         shipChooserScene.getPane().getChildren().add(createShipsToChoose());
         
-        
+        shipChooserScene.getPane().getChildren().add(createButtonToStart());
     }
     
     private HBox createShipsToChoose(){
@@ -239,11 +239,29 @@ public class ViewController {
                 } 
             });
         }
-        
+
         box.setLayoutX(300-(118*2));
-        box.setLayoutY(100);
+        box.setLayoutY(140);
         
         return box;
+    }
+
+    private SpaceRunnerButton createButtonToStart(){
+        SpaceRunnerButton startButton = new SpaceRunnerButton("Start");
+        startButton.setLayoutX(350);
+        startButton.setLayoutY(320);
+
+        startButton.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                if(choosenShip != null){
+                    GameViewController gameController = new GameViewController();
+                    gameController.createNewGame(mainStage, choosenShip);
+                }
+            }
+        });
+
+        return startButton;
     }
     
 }
