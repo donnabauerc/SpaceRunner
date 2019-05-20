@@ -6,7 +6,6 @@
 package model;
 
 import javafx.animation.TranslateTransition;
-import javafx.scene.Parent;
 import javafx.scene.SubScene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -22,8 +21,8 @@ import javafx.util.Duration;
  */
 public class SpaceRunnerSubScene extends SubScene{
     
-    private final static String FONT_PATH = "src/model/ressources/kenvector_future.ttf";
-    private final static String BACKGROUND_IMAGE = "model/ressources/yellow_panel.png";
+    private final static String FONT_PATH = "src/model/resources/kenvector_future.ttf";
+    private final static String BACKGROUND_IMAGE = "model/resources/yellow_panel.png";
 
     private boolean isHidden;
     

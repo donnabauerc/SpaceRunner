@@ -22,9 +22,9 @@ import javafx.scene.text.Font;
  * @author Chris
  */
 public class SpaceRunnerButton extends Button{
-    private final String FONT_PATH = "src/model/ressources/kenvector_future.ttf";
-    private final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/ressources/yellow_button_pressed.png')";
-    private final String BUTTON_FREE_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/ressources/yellow_button.png')";
+    private final String FONT_PATH = "src/model/resources/kenvector_future.ttf";
+    private final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/resources/yellow_button_pressed.png')";
+    private final String BUTTON_FREE_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/resources/yellow_button.png')";
     
     public SpaceRunnerButton(String txt){
         setText(txt);

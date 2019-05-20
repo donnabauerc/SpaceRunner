@@ -8,7 +8,7 @@ package model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import javafx.geometry.Insets;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -24,8 +24,8 @@ import javafx.scene.text.Font;
  */
 public class InfoLabel extends Label {
     
-    public final static String FONT_PATH = "src/model/ressources/kenvector_future.ttf";
-    public final static String BACKGROUND_IMAGE = "view/ressources/yellow_small_panel.png";
+    public final static String FONT_PATH = "src/model/resources/kenvector_future.ttf";
+    public final static String BACKGROUND_IMAGE = "view/resources/yellow_small_panel.png";
     
     public InfoLabel(String text) {
         setPrefWidth(380);

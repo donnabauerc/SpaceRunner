@@ -8,10 +8,8 @@ package view;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -163,7 +161,7 @@ public class ViewController {
     }
     
     private void createBackground(){
-        Image backgroundImage = new Image("view/ressources/purple.png", 256, 256,false, true);
+        Image backgroundImage = new Image("view/resources/purple.png", 256, 256,false, true);
         BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.DEFAULT, null);
         
@@ -171,7 +169,7 @@ public class ViewController {
     }
    
     private void createLogo(){
-        ImageView logo = new ImageView("view/ressources/logo.png");
+        ImageView logo = new ImageView("view/resources/logo.png");
         logo.setLayoutX(700);
         logo.setLayoutY(50);
         
