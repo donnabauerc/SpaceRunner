@@ -1,9 +1,11 @@
 package view;
 
 import javafx.animation.AnimationTimer;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -11,10 +13,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Ship;
+import model.SmallInfoLabel;
 
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 public class GameViewController {
@@ -30,7 +31,7 @@ public class GameViewController {
     private ImageView ship;
 
     private boolean isLeftKeyPressed;
-    private boolean isRigthKeyPressed;
+    private boolean isRightKeyPressed;
     private boolean isUpKeyPressed;
     private boolean isDownKeyPressed;
 
@@ -39,21 +40,37 @@ public class GameViewController {
 
     private GridPane gridPane1;
     private GridPane gridPane2;
-    private final static String BACKGROUND_IMAGE = "view/resources/black.png";
+    private final static String BACKGROUND_IMAGE = "view/resources/blue.png";
 
-    private double speed = 1;
+    private double speed = 2;
+    private Timer speedTimer = new Timer();
 
     private final static String METEOR_BROWN_MEDIUM = "view/resources/meteorBrown_m.png";
     private final static String METEOR_Grey_MEDIUM = "view/resources/meteorGrey_m.png";
 
     private ImageView[] brownMeteors;
     private ImageView[] greyMeteors;
-    Random randomPositionGenerator;
+    Random randomPositionGeneratorX;
+    Random randomPositionGeneratorY;
+
+    private ImageView star;
+    private SmallInfoLabel pointsLabel;
+    private ImageView[] playerLifes;
+    private int playerLife;
+    private static int points;
+    private final static String GOLD_STAR_IMAGE = "view/resources/star_gold.png";
+
+    private final static int STAR_RADIUS = 12;
+    private final static int SHIP_RADIUS = 27;
+    private final static int METEOR_RADIUS = 20;
+
+    private static ObservableList<Integer> history;
 
     public GameViewController(){
         initializeStage();
         createKeyListeners();
-        randomPositionGenerator = new Random();
+        randomPositionGeneratorX = new Random();
+        randomPositionGeneratorY = new Random();
     }
 
     private void createKeyListeners() {
@@ -63,7 +80,7 @@ public class GameViewController {
                 if(event.getCode() == KeyCode.LEFT){
                     isLeftKeyPressed = true;
                 }else if(event.getCode() == KeyCode.RIGHT){
-                    isRigthKeyPressed = true;
+                    isRightKeyPressed = true;
                 }
 
                 if(event.getCode() == KeyCode.UP){
@@ -80,7 +97,7 @@ public class GameViewController {
                 if(event.getCode() == KeyCode.LEFT){
                     isLeftKeyPressed = false;
                 }else if(event.getCode() == KeyCode.RIGHT){
-                    isRigthKeyPressed = false;
+                    isRightKeyPressed = false;
                 }
 
                 if(event.getCode() == KeyCode.UP){
@@ -104,7 +121,7 @@ public class GameViewController {
         this.menuStage.hide();
         createBackground();
         createShip(choosenShip);
-        createGameElements();
+        createGameElements(choosenShip);
         createGameLoop();
         gameStage.show();
     }
@@ -123,12 +140,10 @@ public class GameViewController {
     }
 
     private void createGameLoop(){
-        Timer speedTimer = new Timer();
-
         speedTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                speed += 0.8;
+                speed += 1;
             }
         },0,5000);
 
@@ -137,7 +152,8 @@ public class GameViewController {
             public void handle(long now) {
                 moveBackground(speed);
                 moveGameElements(speed);
-                checkIfElemtsAreBehingTheShipAndRelocate();
+                checkIfElementsAreBehindTheShipAndRelocate();
+                checkIfElementsCollide();
                 moveShip(speed);
             }
         };
@@ -146,7 +162,7 @@ public class GameViewController {
     }
 
     private void moveShip(double boost){
-        if(isLeftKeyPressed && !isRigthKeyPressed){
+        if(isLeftKeyPressed && !isRightKeyPressed){
             if(angle > -30){
                 angle -= 5;
             }
@@ -157,7 +173,7 @@ public class GameViewController {
             }
         }
 
-        if(isRigthKeyPressed && !isLeftKeyPressed){
+        if(isRightKeyPressed && !isLeftKeyPressed){
             if(angle < 30){
                 angle += 5;
             }
@@ -170,17 +186,17 @@ public class GameViewController {
 
         if(isUpKeyPressed && !isDownKeyPressed){
             if(ship.getLayoutY() > 25){
-                ship.setLayoutY(ship.getLayoutY()-(5-boost));
+                ship.setLayoutY(ship.getLayoutY()-boost);
             }
         }
 
         if(isDownKeyPressed && !isUpKeyPressed){
-            if(ship.getLayoutY() < 710){
-                ship.setLayoutY(ship.getLayoutY()+(5+boost));
+            if(ship.getLayoutY() < 700){
+                ship.setLayoutY(ship.getLayoutY()+boost);
             }
         }
 
-        if(isLeftKeyPressed && isRigthKeyPressed){
+        if(isLeftKeyPressed && isRightKeyPressed){
             if(angle < 0){
                 angle += 5;
             }else if(angle > 0){
@@ -189,7 +205,7 @@ public class GameViewController {
             ship.setRotate(angle);
         }
 
-        if(!isLeftKeyPressed && !isRigthKeyPressed){
+        if(!isLeftKeyPressed && !isRightKeyPressed){
             if(angle < 0){
                 angle += 5;
             }else if(angle > 0){
@@ -214,6 +230,7 @@ public class GameViewController {
             gridPane2.getChildren().add(backgroundImage2);
         }
 
+        gridPane1.setLayoutY(0);
         gridPane2.setLayoutY(-1024);
 
         gamePane.getChildren().addAll(gridPane1, gridPane2);
@@ -232,16 +249,33 @@ public class GameViewController {
         }
     }
 
-    private void createGameElements(){// with time more meteors?
-        brownMeteors = new ImageView[5];
-        greyMeteors = new ImageView[5];
+    private void createGameElements(Ship choosenShip){
+        playerLife = 2;
 
+        star = new ImageView(GOLD_STAR_IMAGE);
+        setNewElementPosition(star);
+        gamePane.getChildren().add(star);
+
+        pointsLabel = new SmallInfoLabel("POINTS: 00");
+        pointsLabel.setLayoutX(460);
+        pointsLabel.setLayoutY(20);
+        gamePane.getChildren().add(pointsLabel);
+
+        playerLifes = new ImageView[3];
+        for(int i = 0;i < playerLifes.length; i++){
+            playerLifes[i] = new ImageView(choosenShip.getUrlLife());
+            playerLifes[i].setLayoutX(455 + (i*50));
+            playerLifes[i].setLayoutY(80);
+            gamePane.getChildren().add(playerLifes[i]);
+        }
+
+        brownMeteors = new ImageView[3];
         for (int i = 0; i < brownMeteors.length; i++){
             brownMeteors[i] = new ImageView(METEOR_BROWN_MEDIUM);
             setNewElementPosition(brownMeteors[i]);
             gamePane.getChildren().add(brownMeteors[i]);
         }
-
+        greyMeteors = new ImageView[3];
         for (int i = 0; i < greyMeteors.length; i++){
             greyMeteors[i]= new ImageView(METEOR_Grey_MEDIUM);
             setNewElementPosition(greyMeteors[i]);
@@ -252,6 +286,8 @@ public class GameViewController {
     }
 
     private void moveGameElements(double speed){
+        star.setLayoutY(star.getLayoutY()+speed);
+
         for(int i = 0; i < brownMeteors.length; i++){
             brownMeteors[i].setLayoutY(brownMeteors[i].getLayoutY()+speed);
             brownMeteors[i].setRotate(brownMeteors[i].getRotate()+4);
@@ -263,9 +299,13 @@ public class GameViewController {
         }
     }
 
-    private void checkIfElemtsAreBehingTheShipAndRelocate(){
+    private void checkIfElementsAreBehindTheShipAndRelocate(){
+        if(star.getLayoutY() > 1200){
+            setNewElementPosition(star);
+        }
+
         for(int i = 0;i < brownMeteors.length; i++){
-            if(brownMeteors[i].getLayoutY() > 900){
+            if(brownMeteors[i].getLayoutY() > 850){
                 setNewElementPosition(brownMeteors[i]);
             }
         }
@@ -278,7 +318,60 @@ public class GameViewController {
     }
 
     private void setNewElementPosition(ImageView image){
-        image.setLayoutX(randomPositionGenerator.nextInt(550)+5);
-        image.setLayoutY(-(randomPositionGenerator.nextInt(3200)+600));
+        image.setLayoutX(randomPositionGeneratorX.nextInt(550)+5);
+        int yPosition = -600-(randomPositionGeneratorY.nextInt(3200));
+        image.setLayoutY(yPosition);
+    }
+
+    private void checkIfElementsCollide(){
+
+        if(SHIP_RADIUS + STAR_RADIUS > calculateDistance(ship.getLayoutX()+49, star.getLayoutX()+35,
+                ship.getLayoutY()+37, star.getLayoutY()+15)){
+            setNewElementPosition(star);
+
+            points++;
+            String textToSet = "POINTS: ";
+            if(points > 10){
+                textToSet = textToSet + "0";
+            }
+            pointsLabel.setText(textToSet + points);
+        }
+
+        checkMeteoritesCollision(brownMeteors);
+        checkMeteoritesCollision(greyMeteors);
+    }
+
+    private void checkMeteoritesCollision(ImageView[] brownMeteors) {
+        for(int i = 0; i < brownMeteors.length; i++){
+            if(METEOR_RADIUS + SHIP_RADIUS > calculateDistance(ship.getLayoutX()+49, brownMeteors[i].getLayoutX()+20,
+                    ship.getLayoutY()+37, brownMeteors[i].getLayoutY()+20)){
+                removeLife();
+                setNewElementPosition(brownMeteors[i]);
+            }
+        }
+    }
+
+    private void removeLife(){
+        gamePane.getChildren().remove(playerLifes[playerLife]);
+        playerLife--;
+        if(playerLife < 0){
+            gameStage.close();
+            gameTimer.stop();
+            speedTimer.cancel();
+            menuStage.show();
+        }
+    }
+
+    private double calculateDistance(double x1, double x2, double y1, double y2){
+        return Math.sqrt(Math.pow(x1-x2,2) * Math.pow(y1-y2,2));
+    }
+
+    public static ObservableList<Integer> getPoints(){
+        if(points != 0){
+            history.add(points);
+            return history;
+        }else{
+            return null;
+        }
     }
 }

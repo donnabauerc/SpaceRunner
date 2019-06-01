@@ -4,12 +4,22 @@
  * and open the template in the editor.
  */
 package view;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import view.GameViewController;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.ListView;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,7 +42,7 @@ import model.SpaceRunnerSubScene;
  * @author Chris
  */
 public class ViewController {
-    //4.03 tutorial nr 6
+
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 708;
     private AnchorPane mainPane;
@@ -53,6 +63,9 @@ public class ViewController {
     
     List<ShipPicker> shipsList;
     private Ship choosenShip;
+
+    private ListView<Integer> lastScores;
+    private ObservableList<Integer> scores = GameViewController.getPoints();
     
     public ViewController() {
         menuButtons = new ArrayList<>();
@@ -191,16 +204,49 @@ public class ViewController {
     }
     
     private void createSubScenes(){
-        scoresSubScene = new SpaceRunnerSubScene();
-        mainPane.getChildren().add(scoresSubScene);
-        
-        helpSubScene = new SpaceRunnerSubScene();
-        mainPane.getChildren().add(helpSubScene);
-        
         creditsSubScene = new SpaceRunnerSubScene();
         mainPane.getChildren().add(creditsSubScene);
-        
         createShipChooserSubScene();
+        createScoresSubScene();
+        createHelpSubScene();
+        createCreditsSubScene();
+    }
+
+    private void createCreditsSubScene() {
+        creditsSubScene = new SpaceRunnerSubScene();
+        mainPane.getChildren().add(creditsSubScene);
+
+        InfoLabel labelCredits = new InfoLabel("Credits: ");
+        labelCredits.setLayoutX(110);
+        labelCredits.setLayoutY(35);
+        creditsSubScene.getPane().getChildren().add(labelCredits);
+
+        Hyperlink credits = new Hyperlink("https://www.youtube.com/channel/UC60jAor0sZzfaguXvCBi7ng");
+        credits.setLayoutX(135);
+        credits.setLayoutY(190);
+        credits.setMaxWidth(350);
+        try {
+            credits.setFont(Font.loadFont(new FileInputStream(new File("src/model/resources/kenvector_future.ttf")), 20));
+        } catch (FileNotFoundException e) {
+            credits.setFont(Font.font("Verdana",20));
+        }
+        creditsSubScene.getPane().getChildren().add(credits);
+    }
+
+    private void createHelpSubScene() {
+        helpSubScene = new SpaceRunnerSubScene();
+        mainPane.getChildren().add(helpSubScene);
+
+        InfoLabel labelHelp = new InfoLabel("Help: ");
+        labelHelp.setLayoutX(110);
+        labelHelp.setLayoutY(35);
+        helpSubScene.getPane().getChildren().add(labelHelp);
+
+        ImageView controls = new ImageView("model/resources/help.png");
+        controls.setLayoutX(145);
+        controls.setLayoutY(115);
+        helpSubScene.getPane().getChildren().add(controls);
+
     }
 
     private void createShipChooserSubScene() {
@@ -215,7 +261,26 @@ public class ViewController {
         
         shipChooserScene.getPane().getChildren().add(createButtonToStart());
     }
-    
+
+    private void createScoresSubScene(){
+        scoresSubScene = new SpaceRunnerSubScene();
+        mainPane.getChildren().add(scoresSubScene);
+
+        InfoLabel labelLastScores = new InfoLabel("Your Last Scores: ");
+        labelLastScores.setLayoutX(110);
+        labelLastScores.setLayoutY(35);
+        scoresSubScene.getPane().getChildren().add(labelLastScores);
+
+        Text read = new Text("Couldn't get to work, see comments in createScoresSubScene() in ViewController.java");
+        read.setLayoutX(80);
+        read.setLayoutY(190);
+        scoresSubScene.getPane().getChildren().add(read);
+        /*if(scores != null){
+            lastScores.setItems(scores);
+        }
+        scoresSubScene.getPane().getChildren().add(lastScores);*/
+    }
+
     private HBox createShipsToChoose(){
         HBox box = new HBox();
         box.setSpacing(20);
