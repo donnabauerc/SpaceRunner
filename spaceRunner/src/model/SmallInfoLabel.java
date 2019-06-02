@@ -20,8 +20,8 @@ public class SmallInfoLabel extends Label {
 
     public SmallInfoLabel(String text){
         setPrefHeight(50);
-        setPrefWidth(130);
-        BackgroundImage backgroundImage = new BackgroundImage(new Image("/view/resources/info_label.png", 130, 50, false, true),
+        setPrefWidth(170);
+        BackgroundImage backgroundImage = new BackgroundImage(new Image("/view/resources/info_label.png", 170, 50, false, true),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
         setBackground(new Background(backgroundImage));
         setAlignment(Pos.CENTER_LEFT);

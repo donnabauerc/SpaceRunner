@@ -239,12 +239,12 @@ public class ViewController {
 
         InfoLabel labelHelp = new InfoLabel("Help: ");
         labelHelp.setLayoutX(110);
-        labelHelp.setLayoutY(35);
+        labelHelp.setLayoutY(20);
         helpSubScene.getPane().getChildren().add(labelHelp);
 
         ImageView controls = new ImageView("model/resources/help.png");
         controls.setLayoutX(145);
-        controls.setLayoutY(115);
+        controls.setLayoutY(78);
         helpSubScene.getPane().getChildren().add(controls);
 
     }
@@ -303,16 +303,16 @@ public class ViewController {
             });
         }
 
-        box.setLayoutX(300-(118*2));
-        box.setLayoutY(140);
+        box.setLayoutX(280-(118*2));
+        box.setLayoutY(130);
         
         return box;
     }
 
     private SpaceRunnerButton createButtonToStart(){
         SpaceRunnerButton startButton = new SpaceRunnerButton("Start");
-        startButton.setLayoutX(350);
-        startButton.setLayoutY(320);
+        startButton.setLayoutX(210);
+        startButton.setLayoutY(310);
 
         startButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override
